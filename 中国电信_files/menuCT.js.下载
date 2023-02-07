@@ -1,0 +1,499 @@
+var MENU_OPTION_CURUSER                      = 0;
+var MENU_OPTION_SYSUSER                      = 1;		
+var MENU_OPTION_VOICE                        = 2;
+var MENU_OPTION_UI_WAN_UPSTREAM_MODE         = 3;
+var MENU_OPTION_IPV6                         = 4;
+var MENU_OPTION_DMS                          = 5;
+var MENU_OPTION_PRODUCTTYPE                  = 6;
+var MENU_OPTION_WIRELESS_NUM_ADAPTOR         = 7;
+var MENU_OPTION_WIRELESS_SES                 = 8;
+var MENU_OPTION_GPONWAN                      = 9;
+var MENU_OPTION_TELACCOUNT					 = 10;
+var MENU_OPTION_SOFTVERSION					 = 11;
+var MENU_OPTION_PERMISSION					 = 12; /*added by hlb,2014.04.20*/
+var MENU_OPTION_PRODUCT_TYPE				 = 13; /*added by hlb,2014.04.21*/
+var MENU_OPTION_VOICE_NUM				 	 = 14; /*added by csh,2014.06.27*/
+var MENU_OPTION_NUM_WL_ADPT				 	 = 15; /*added by tjh,2015.07.27*/
+var MENU_OPTION_SMART_GW					 = 16; /*added by yangtai 2016/02/02*/
+var MENU_OPTION_BUCPE_ABILITY				 = 17; /*yangtai add 20160620*/	
+var MENU_OPTION_SDN_SUPPORT				     = 18; /*yangtai add 20160620*/	
+
+var wlItemsCgiCmd = new Array(
+ 	                    'wlswitchinterface0.wl',
+                           'wlswitchinterface1.wl',
+                           'wlswitchinterface2.wl',
+                           'wlswitchinterface3.wl'
+                          );
+
+ var wlmenuTitle = new Array(
+ 	                    'wl0',
+                           'wl1',
+                           'wl2',
+                           'wl3'
+                          );
+
+function menuAdmin(options) {
+    var voice        = options[MENU_OPTION_VOICE];
+    var upStreamMode = options[MENU_OPTION_UI_WAN_UPSTREAM_MODE];
+    var ipv6         = options[MENU_OPTION_IPV6];
+    var dms          = options[MENU_OPTION_DMS];
+    var ProductType  = options[MENU_OPTION_PRODUCTTYPE];
+    var wireless_ses = options[MENU_OPTION_WIRELESS_SES];
+    var gponwan      = options[MENU_OPTION_GPONWAN]; 
+	var softVersion  = options[MENU_OPTION_SOFTVERSION];
+	var permisson = options[MENU_OPTION_PERMISSION];
+	var product_type = options[MENU_OPTION_PRODUCT_TYPE];
+	var voiceNum 	 = options[MENU_OPTION_VOICE_NUM];
+	var is_smart 	 = options[MENU_OPTION_SMART_GW];
+	var bucpe_ablity = options[MENU_OPTION_BUCPE_ABILITY];/*-yangtai add 20170620-*/
+	
+  
+
+
+	/*** 状态 ***/
+	//网络侧信息
+	nodeStatusNet = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_WAN), 'SW_IPinfo.html'));
+	insFld(nodeStatusNet, gFld(getMenuTitle(Menu3_SW_IPinfo), 'SW_IPinfo.html'));
+	if (upStreamMode != '4')//4-LAN up device
+	{
+		insFld(nodeStatusNet, gFld(getMenuTitle(Menu3_SW_Linkinfo), 'SW_Pon_Linkinfo.html'));
+	}
+
+	//用户侧信息
+	nodeStatusLan = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_LAN), 'SL_Ethinfo.html'));
+	insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_Ethinfo), 'SL_Ethinfo.html'));
+	if(product_type == '4' || options[MENU_OPTION_NUM_WL_ADPT] != '0')
+	{
+	    //nodeStatusLan = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_LAN), 'SL_WLANinfo.html'));
+		if(softVersion == "ZheJiang_WuPin" && options[MENU_OPTION_NUM_WL_ADPT] == 1){
+			;
+		}else{
+			insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_WLANinfo), 'SL_WLANinfo.html'));
+		}
+	    insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_USBinfo), 'SL_USBinfo.html'));
+	}
+	//语音信息
+	if(voiceNum != '0')
+	{
+		if (voice == 'SIP,IMS SIP,H.248')
+		{
+			nodeStatusVoice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Voice), 'SV_Voiceinfo_SIPH248.html'));
+			insFld(nodeStatusVoice, gFld(getMenuTitle(Menu3_SV_Voiceinfo), 'SV_Voiceinfo_SIPH248.html'));
+		}
+	}
+	//远程管理状态
+	nodeStatusManagement = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Management), 'SM_Interactive.html'));
+	insFld(nodeStatusManagement, gFld(getMenuTitle(Menu3_SM_Interactive), 'SM_Interactive.html'));
+	insFld(nodeStatusManagement, gFld(getMenuTitle(Menu3_SM_Setupstatus), 'SM_Setupstatus.html'));
+	//智能网关管理状态
+	if(is_smart == '1'){
+		nodeStatusManagement = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Mobilapp),'SM_smartStatus.html'));
+		insFld(nodeStatusManagement,gFld(getMenuTitle(Menu3_Sta_Showmobinfo),'SM_smartStatus.html'));
+		insFld(nodeStatusManagement,gFld(getMenuTitle(Menu3_Sta_Setmobinfo),'SM_smartSet.html'));
+	}
+	//地理位置信息  2016.11.16 by wh
+	if(	bucpe_ablity == 1)
+	{
+		nodeStatusGeographic = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_geographicinfo), 'geographical_info.html'));
+		insFld(nodeStatusGeographic, gFld(getMenuTitle(Menu3_So_geographicinfo), 'geographical_info.html'));
+		insFld(nodeStatusGeographic, gFld(getMenuTitle(Menu3_Ser_configurationinfo), 'ServerConfiguration.html'));
+		insFld(nodeStatusGeographic, gFld(getMenuTitle(Menu3_Sta_equipmentinfo), 'Sta_equipmentinfo.html'));
+		insFld(nodeStatusGeographic, gFld(getMenuTitle(Menu3_Sta_interfaceinfo), 'Sta_interfaceinfo.html'));
+		insFld(nodeStatusGeographic, gFld(getMenuTitle(Menu3_Sta_taskresults), 'Sta_taskresults.html'));
+	}
+	/******* 网络 ********/
+	nodeNet = insFld(foldersTree, gFld(getMenuTitle(Menu1_Network), 'NN_WAN.html'));
+	//网络设置
+	nodeNetNetwork = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_Network), 'NN_WAN.html'));
+	insFld(nodeNetNetwork, gFld(getMenuTitle(Menu3_NN_WAN), 'NN_WAN.html'));
+	insFld(nodeNetNetwork, gFld(getMenuTitle(Menu3_NN_VLAN), 'NN_VLAN.html'));
+	//用户侧管理
+	nodeNetLan = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_LAN), 'ND_IPv4.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_IPv4), 'ND_IPv4.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_IPv6), 'ND_IPv6.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_Named), 'ND_Named.html'));
+	//WLAN设置
+	if(product_type == '4' || options[MENU_OPTION_NUM_WL_ADPT] != '0')
+	{
+		if(softVersion == "ZheJiang_WuPin" && options[MENU_OPTION_NUM_WL_ADPT] == 1){
+			;
+		}
+		else{
+			nodeNetWlan = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_WLAN), 'NW_Basic.html'));
+			insFld(nodeNetWlan, gFld(getMenuTitle(Menu3_NW_Basic), 'NW_Basic.html'));
+			insFld(nodeNetWlan, gFld(getMenuTitle(Menu3_NW_Advanced), 'NW_Advanced.html'));
+		}
+	}
+	//远程管理
+	nodeNetManagement = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_Management), 'NM_ITMS.html'));
+	insFld(nodeNetManagement, gFld(getMenuTitle(Menu3_NM_ITMS), 'NM_ITMS.html'));
+	if (upStreamMode != '4')//4-LAN up device
+	{
+		insFld(nodeNetManagement, gFld(getMenuTitle(Menu3_NM_Loid), 'NM_Loid.html'));
+	}
+	//QoS设置
+	nodeNetQos = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_QoS), 'NQ_Basic.html'));
+	insFld(nodeNetQos, gFld(getMenuTitle(Menu3_NQ_Basic), 'NQ_Basic.html'));
+	insFld(nodeNetQos, gFld(getMenuTitle(Menu3_NQ_Advanced), 'NQ_Advanced.html'));
+	insFld(nodeNetQos, gFld(getMenuTitle(Menu3_NQ_Down), 'NQ_Down.html'));
+	//时间管理
+	nodeNetNtp = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_NTP), 'NNTP_NTP.html'));
+	insFld(nodeNetNtp, gFld(getMenuTitle(Menu3_NNTP_NTP), 'NNTP_NTP.html'));
+	//路由配置
+	nodeNetRoute = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_Route), 'NR_Route.html'));
+	insFld(nodeNetRoute, gFld(getMenuTitle(Menu3_NR_Route), 'NR_Route.html'));
+	//2016.7.1 tianjin add route table wenhuan
+	if(softVersion == 'TianJin') {
+		insFld(nodeNetRoute, gFld(getMenuTitle(Menu3_NT_Route), 'NT_Route.html'));
+	}
+	/******* 网络 end ********/
+	
+	/******* 安全 ********/
+	nodeSecure = insFld(foldersTree, gFld(getMenuTitle(Menu1_Secure), 'urlfilter.html'));
+	//广域网访问设置
+	nodeSecuWan = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_WAN), 'urlfilter.html'));
+	insFld(nodeSecuWan, gFld(getMenuTitle(Menu3_SeW_WAN), 'urlfilter.html')); //SeW_WAN.html
+	//防火墙
+	nodeSecuFirewall = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_Firewall), 'firewall.html')); //SeF_Firewall
+	insFld(nodeSecuFirewall, gFld(getMenuTitle(Menu3_SeF_Firewall), 'firewall.html'));
+	//MAC过滤
+	//if(softVersion == 'SiChuan' || softVersion == 'BeiJing' || softVersion == 'TianJin')
+	if(1){//yangtai add 20160223
+		nodeSecuMac = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_MAC), 'Sc_macflt.html')); 
+		insFld(nodeSecuMac, gFld(getMenuTitle(Menu3_SeM_MAC), 'Sc_macflt.html')); 
+	}else{
+		nodeSecuMac = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_MAC), 'ctmacflt.html')); //SeM_MAC.html
+		insFld(nodeSecuMac, gFld(getMenuTitle(Menu3_SeM_MAC), 'ctmacflt.html')); //SeM_MAC.html
+	}
+	if(softVersion == 'JiangXi'){
+		nodeSecuTerm = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_Term), 'NetTerm.html'));
+		insFld(nodeSecuTerm, gFld(getMenuTitle(Menu3_SeM_Term), 'NetTerm.html'));
+	}
+	if(softVersion == 'XinJiang') {//add by wh 2018.6.12 添加公安溯源页面 白名单
+		nodeSecuTraceability = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_traceability), 'publicSecu.html'));
+		insFld(nodeSecuTraceability, gFld(getMenuTitle(Menu3_SeP_traceability), 'publicSecu.html'));
+		insFld(nodeSecuTraceability, gFld(getMenuTitle(Menu3_SeP_WhiteList), 'WhiteList.html'));
+	}
+
+	/******* 安全 end ********/
+	
+	
+	/******* 应用 ********/
+	nodeApplication = insFld(foldersTree, gFld(getMenuTitle(Menu1_Application), 'ddnsMngr.html')); //AD_DDNS.html
+	//DDNS配置
+	nodeApplicationDdns = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_DDNS), 'ddnsMngr.html')); //AD_DDNS.html
+	insFld(nodeApplicationDdns, gFld(getMenuTitle(Menu3_AD_DDNS), 'ddnsMngr.html'));  //AD_DDNS.html
+	//高级NAT配置
+	nodeApplicationNat = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_NAT), 'ctalgcfg.html')); //AN_ALG.html
+	insFld(nodeApplicationNat, gFld(getMenuTitle(Menu3_AN_ALG), 'ctalgcfg.html'));
+	insFld(nodeApplicationNat, gFld(getMenuTitle(Menu3_AN_DMZ), 'scdmz.html')); //AN_DMZ.html
+	insFld(nodeApplicationNat, gFld(getMenuTitle(Menu3_AN_VirtualServer), 'AN_VirtualServer.html')); //scvrtsrv.cmd?action=view
+	//UPnP配置
+	nodeApplicationUpnp = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_UPnP), 'upnpcfg.html')); //AU_UPnP.html
+	insFld(nodeApplicationUpnp, gFld(getMenuTitle(Menu3_AU_UPnP), 'upnpcfg.html'));//AU_UPnP.html
+	//宽带电话设置
+	if(voiceNum != '0')
+	{
+		 if (voice == 'SIP,IMS SIP,H.248')
+		 {
+		 	nodeApplicationVoice = insFld(nodeApplication, gFld(getMenuTitle(Menu2_APP_Voice), 'AV_Basic_SIPH248.html'));
+ 			insFld(nodeApplicationVoice, gFld(getMenuTitle(Menu3_AV_Basic), 'AV_Basic_SIPH248.html'));
+ 		
+ 			insFld(nodeApplicationVoice, gFld(getMenuTitle(Menu3_AV_Advanced), 'AV_Advanced_SIPH248.html'));
+ 			insFld(nodeApplicationVoice, gFld(getMenuTitle(Menu3_AV_Addtional), 'AV_Addtional_SIPH248.html'));
+ 			insFld(nodeApplicationVoice, gFld(getMenuTitle(Menu3_AV_Digitalmap), 'AV_Digitalmap_SIPH248.html'));
+			if (softVersion == 'SiChuan')
+			{
+				insFld(nodeApplicationVoice, gFld('特殊数图设置', 'AV_Digitalmap_SC.html'));
+			}
+ 			insFld(nodeApplicationVoice, gFld(getMenuTitle(Menu3_AV_Fax), 'AV_Fax.html'));
+		 }
+     }
+	
+	//IGMP设置
+	//add by wh 2018.11.1 福建加全局组播设置页面
+	if(softVersion=="FuJian") {
+		nodeApplicationIgmp = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_IGMP), 'AI_globalSet.html'));
+		insFld(nodeApplicationIgmp, gFld(getMenuTitle(Menu3_AI_globalmulSet), 'AI_globalSet.html'));
+		insFld(nodeApplicationIgmp, gFld(getMenuTitle(Menu3_AI_Muticast), 'AI_Muticast.html'));
+	}
+	else{
+		nodeApplicationIgmp = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_IGMP), 'AI_Muticast.html'));
+		insFld(nodeApplicationIgmp, gFld(getMenuTitle(Menu3_AI_Muticast), 'AI_Muticast.html'));
+	}
+
+	if(softVersion=="HuBei") {
+		insFld(nodeApplicationIgmp, gFld(getMenuTitle(Menu3_AI_globalSet), 'AI_globalSet.html'));//add by:wh 2017.1.9
+	}
+	//日常应用
+	nodeApplicationApplication = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_Application), 'usbxdown.html')); //AA_Download.html
+	insFld(nodeApplicationApplication, gFld(getMenuTitle(Menu3_AA_Download), 'usbxdown.html'));//AA_Download.html
+	
+		//宽带普遍服务
+	//if(softVersion == 'HuBei' || softVersion == 'JiangXi')
+	{ //2018.7.10 宽带普遍服务页面只有湖北和江西显示
+		nodeApplicationBroadband = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_Broadband), 'Broadband_service.html')); //Broadband_service.html
+		insFld(nodeApplicationBroadband, gFld(getMenuTitle(Menu3_AI_Broadband), 'Broadband_service.html'));//Broadband_service.html
+	}
+	/******* 应用 end ********/
+	
+	
+	/******* 管理 ********/
+	nodeManagement = insFld(foldersTree, gFld(getMenuTitle(Menu1_Management), 'MU_User_Management.html'));
+	//用户管理
+	nodeManagementUser = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_User), 'MU_User_Management.html')); //MU_User.html
+	insFld(nodeManagementUser, gFld(getMenuTitle(Menu3_MU_User), 'MU_User_Management.html'));//MU_User.html
+	//设备管理
+	nodeManagementDevice = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_Device), 'MD_Device.html'));
+	insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Device), 'MD_Device.html'));
+	insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Sleep), 'gatewaySleepStatus.html'));
+	//2016.8.4 wenhuan 福建版本要求普通账号登录设备后要有设备自动重启的功能
+	if(softVersion=="FuJian") {
+		insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Restart), 'cpuandmemdetect.html'));
+	}
+	insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Energy), 'pwrctl.html'));
+
+	//日志文件管理
+	nodeManagementLog = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_Log), 'ctlogintro.html')); //ML_Check.html
+	insFld(nodeManagementLog, gFld(getMenuTitle(Menu3_ML_Check), 'ctlogintro.html')); //ML_Check.html
+	insFld(nodeManagementLog, gFld(getMenuTitle(Menu3_ML_Setting), 'logconfig.html')); //ML_Setting.html
+	//维护
+	nodeManagementMaintain = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_Maintain), 'ctdiagmng.html')); //MM_Maintain.html
+	insFld(nodeManagementMaintain, gFld(getMenuTitle(Menu3_MM_Maintain), 'ctdiagmng.html')); //MM_Maintain.html
+	//工作模式选择    2017.11.17 add by:wh
+    if(options[MENU_OPTION_SDN_SUPPORT] == "1")
+    {
+        nodeManagementMode = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_Mode), 'SDNWorkMode.html'));
+        insFld(nodeManagementMode, gFld(getMenuTitle(Menu3_Mw_Mode), 'SDNWorkMode.html'));
+    }
+	/******* 管理 end ********/
+	
+	/******* 诊断 ********/
+	nodeDiagnose = insFld(foldersTree, gFld(getMenuTitle(Menu1_diagnose), 'DD_Ping.html'));
+	//网络诊断
+	nodeDiagnoseDiagnose = insFld(nodeDiagnose, gFld(getMenuTitle(Menu2_Dia_Diagnose), 'DD_Ping.html'));
+	insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_DD_Ping), 'DD_Ping.html'));
+	insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_DD_Tracert), 'DD_Tracer.html')); //DD_Tracer.html
+	insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_DD_Inform), 'DD_Inform.html')); //DD_Inform.html
+	//yangtai port form 6838 20160314
+	if (softVersion == 'GuangDong'){
+		insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_AD_System),'AD_System.html'));
+		insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_AD_Qoe),'AD_Qoe.html'));
+	}
+	if (upStreamMode != '4')//4-LAN up device
+	{
+		//2016.7.19 wenhuan 手动重启及暂停Framework
+		insFld(nodeDiagnoseDiagnose, gFld(getMenuTitle(Menu3_DD_Framework), 'DD_Framework.html')); //DD_Framework.html
+	}
+	nodeBusDiagnose = insFld(nodeDiagnose, gFld(getMenuTitle(Menu2_Bus_Diagnose), 'DD_Business.html'));
+	insFld(nodeBusDiagnose, gFld('语音诊断', 'DD_Business.html')); //DD_Business.html
+	/******* 诊断 end ********/
+	
+	/******* 帮助 ********/
+	nodeHelp = insFld(foldersTree, gFld(getMenuTitle(Menu1_Help), 'HH_Help.html'));
+	//使用帮助
+	nodeHelpHelp = insFld(nodeHelp, gFld(getMenuTitle(Menu2_Help_Help), 'HH_Help.html'));
+	insFld(nodeHelpHelp, gFld(getMenuTitle(Menu3_HH_Help), 'HH_Help.html'));
+	/******* 帮助 end ********/
+	
+}
+
+function menuUser(options) {
+    var voice = options[MENU_OPTION_VOICE];
+    var ipv6 = options[MENU_OPTION_IPV6];
+    var upStreamMode = options[MENU_OPTION_UI_WAN_UPSTREAM_MODE];
+    var dms = options[MENU_OPTION_DMS];
+    var ProductType = options[MENU_OPTION_PRODUCTTYPE];
+    var numWl        = options[MENU_OPTION_WIRELESS_NUM_ADAPTOR];
+    var wireless_ses = options[MENU_OPTION_WIRELESS_SES];
+    var product_type = options[MENU_OPTION_PRODUCT_TYPE];
+    var voiceNum = options[MENU_OPTION_VOICE_NUM];
+    var softVersion  = options[MENU_OPTION_SOFTVERSION];
+    var permisson = options[MENU_OPTION_PERMISSION];
+    
+	
+	/*******  状态 ********/
+	//网络侧信息
+	nodeStatusNet = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_WAN), 'SW_IPinfo.html'));
+	insFld(nodeStatusNet, gFld(getMenuTitle(Menu3_SW_IPinfo), 'SW_IPinfo.html'));
+	if (upStreamMode != '4')//4-LAN up device
+	{
+		insFld(nodeStatusNet, gFld(getMenuTitle(Menu3_SW_Linkinfo), 'SW_Pon_Linkinfo_user.html'));
+	}
+	
+	//用户侧信息
+	nodeStatusLan = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_LAN), 'SL_Ethinfo.html'));
+	insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_Ethinfo), 'SL_Ethinfo.html'));
+	if(product_type == '4' || options[MENU_OPTION_NUM_WL_ADPT] != '0')
+	{
+	    //nodeStatusLan = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_LAN), 'SL_WLANinfo.html'));
+	    insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_WLANinfo), 'SL_WLANinfo.html'));
+	    insFld(nodeStatusLan, gFld(getMenuTitle(Menu3_SL_USBinfo), 'SL_USBinfo.html'));
+	}
+	//语音信息
+	if(voiceNum != '0')
+	{
+		if (voice == 'SIP,IMS SIP,H.248')
+		{
+			nodeStatusVoice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Voice), 'SV_Voiceinfo_SIPH248.html'));
+			insFld(nodeStatusVoice, gFld(getMenuTitle(Menu3_SV_Voiceinfo), 'SV_Voiceinfo_SIPH248.html'));
+		}
+	}
+	//远程管理状态
+	nodeStatusManagement = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Management), 'SM_Interactive.html'));
+	insFld(nodeStatusManagement, gFld(getMenuTitle(Menu3_SM_Interactive), 'SM_Interactive.html'));
+	insFld(nodeStatusManagement, gFld(getMenuTitle(Menu3_SM_Setupstatus), 'SM_Setupstatus.html'));
+	/*******  状态 end ********/
+	
+	/*******  网络 ********/
+	if (softVersion == 'HuBei')
+	{
+		nodeNet = insFld(foldersTree, gFld(getMenuTitle(Menu1_Network), 'NN_WAN.html'));
+		//网络设置
+		nodeNetNetwork = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_Network), 'NN_WAN.html'));
+		insFld(nodeNetNetwork, gFld(getMenuTitle(Menu3_NN_WAN), 'NN_WAN.html'));
+	}
+	else
+	{
+		nodeNet = insFld(foldersTree, gFld(getMenuTitle(Menu1_Network), 'ND_IPv4.html'));
+	}
+	
+	//用户侧管理
+	nodeNetLan = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_LAN), 'ND_IPv4.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_IPv4), 'ND_IPv4.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_IPv6), 'ND_IPv6.html'));
+	insFld(nodeNetLan, gFld(getMenuTitle(Menu3_ND_Named), 'ND_Named.html'));
+	//WLAN设置
+	if(product_type == '4')
+	{
+	  nodeNetWlan = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_WLAN), 'NW_Basic.html'));
+	  insFld(nodeNetWlan, gFld(getMenuTitle(Menu3_NW_Basic), 'NW_Basic.html'));
+	  insFld(nodeNetWlan, gFld(getMenuTitle(Menu3_NW_Advanced), 'NW_Advanced.html'));
+	}
+	//远程管理
+	if (upStreamMode != '4')//4-LAN up device
+	{
+		nodeNetManagement = insFld(nodeNet, gFld(getMenuTitle(Menu2_Net_Management), 'NM_Loid.html'));
+		insFld(nodeNetManagement, gFld(getMenuTitle(Menu3_NM_Loid), 'NM_Loid.html'));
+	}
+	
+	/*******  网络 end ********/
+	
+	
+	/******* 安全 ********/
+	nodeSecure = insFld(foldersTree, gFld(getMenuTitle(Menu1_Secure), 'urlfilter.html'));
+	//广域网访问设置
+	nodeSecuWan = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_WAN), 'urlfilter.html'));
+	insFld(nodeSecuWan, gFld(getMenuTitle(Menu3_SeW_WAN), 'urlfilter.html'));
+	//防火墙
+	nodeSecuFirewall = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_Firewall), 'firewall.html')); //SeF_Firewall
+	insFld(nodeSecuFirewall, gFld(getMenuTitle(Menu3_SeF_Firewall), 'firewall.html'));
+	//MAC过滤
+	nodeSecuMac = insFld(nodeSecure, gFld(getMenuTitle(Menu2_Secu_MAC), 'ctmacflt.html')); //SeM_MAC.html
+	insFld(nodeSecuMac, gFld(getMenuTitle(Menu3_SeM_MAC), 'ctmacflt.html')); //SeM_MAC.html
+	
+	/******* 安全 end ********/
+	
+	
+	if (softVersion == 'FuJian')
+	{
+		nodeApplication = insFld(foldersTree, gFld(getMenuTitle(Menu1_Application), 'scdmz.html')); 
+		nodeApplicationNat = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_NAT), 'scdmz.html')); //AN_ALG.html
+		insFld(nodeApplicationNat, gFld(getMenuTitle(Menu3_AN_DMZ), 'scdmz.html')); //AN_DMZ.html
+		insFld(nodeApplicationNat, gFld(getMenuTitle(Menu3_AN_VirtualServer), 'AN_VirtualServer.html'));//AN_VIRTUALSERVET 
+	}
+	else
+	{
+		nodeApplication = insFld(foldersTree, gFld(getMenuTitle(Menu1_Application), 'usbxdown.html')); 
+	}
+	//日常应用
+	nodeApplicationApplication = insFld(nodeApplication, gFld(getMenuTitle(Menu2_App_Application), 'usbxdown.html')); //AA_Download.html
+	insFld(nodeApplicationApplication, gFld(getMenuTitle(Menu3_AA_Download), 'usbxdown.html'));//AA_Download.html
+	
+	
+	/******* 应用 end ********/
+	
+	
+	/******* 管理 ********/
+	nodeManagement = insFld(foldersTree, gFld(getMenuTitle(Menu1_Management), 'MU_User.html'));
+	//用户管理
+	nodeManagementUser = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_User), 'MU_User.html')); //MU_User.html
+	insFld(nodeManagementUser, gFld(getMenuTitle(Menu3_MU_User), 'MU_User.html')); //MU_User.html
+	//设备管理
+	nodeManagementDevice = insFld(nodeManagement, gFld(getMenuTitle(Menu2_Mng_Device), 'MD_Device_user.html'));
+	insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Device), 'MD_Device_user.html'));
+	//2016.4.6 wenhuan 福建版本要求普通账号登录设备后要有设备自动重启的功能
+	if(softVersion=="FuJian"){
+		insFld(nodeManagementDevice, gFld(getMenuTitle(Menu3_MD_Restart), 'cpuandmemdetect.html'));
+	}
+	/******* 管理 end ********/
+	
+	/******* 帮助 ********/
+	nodeHelp = insFld(foldersTree, gFld(getMenuTitle(Menu1_Help), 'HH_Help_user.html'));
+	//使用帮助
+	nodeHelpHelp = insFld(nodeHelp, gFld(getMenuTitle(Menu2_Help_Help), 'HH_Help_user.html'));
+	insFld(nodeHelpHelp, gFld(getMenuTitle(Menu3_HH_Help), 'HH_Help_user.html'));
+	/******* 帮助 end ********/
+
+}
+
+function createCTMenu(options) {
+    var curuser = options[MENU_OPTION_CURUSER];
+    var sysuser = options[MENU_OPTION_SYSUSER];
+    var softVersion  = options[MENU_OPTION_SOFTVERSION];
+    var voiceNum      = options[MENU_OPTION_VOICE_NUM];
+
+    //foldersTree = gFld('', 'SO_Overview.html'); 
+    // device info menu
+    //nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'SO_Overview.html'));
+      if ( curuser == sysuser ||curuser == options[MENU_OPTION_TELACCOUNT])
+      {
+      	 if (softVersion == 'SiChuan')
+      	 {
+			foldersTree = gFld('', 'itmsmgmtinfo.html'); 
+         	nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'itmsmgmtinfo.html'));
+		 	nodeStatusDevice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Overview), 'itmsmgmtinfo.html'));
+			insFld(nodeStatusDevice, gFld('远程管理信息', 'itmsmgmtinfo.html'));
+         	insFld(nodeStatusDevice, gFld(getMenuTitle(Menu3_SO_Overview), 'SO_Overview.html'));
+      	 }
+		 else if(softVersion == 'FuJian')//yangtai add 2014/12/8
+	 	 {
+	 	 	foldersTree = gFld('', 'SO_Overview_FuJian.html'); 
+         	nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'SO_Overview_FuJian.html'));
+		 	nodeStatusDevice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Overview), 'SO_Overview_FuJian.html'));
+         	insFld(nodeStatusDevice, gFld(getMenuTitle(Menu3_SO_Overview), 'SO_Overview_FuJian.html'));
+	 	 }
+		 else
+		 {
+			foldersTree = gFld('', 'SO_Overview.html'); 
+         	nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'SO_Overview.html'));
+		 	nodeStatusDevice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Overview), 'SO_Overview.html'));
+         	insFld(nodeStatusDevice, gFld(getMenuTitle(Menu3_SO_Overview), 'SO_Overview.html'));
+		 }
+	  }
+	  else
+	  {
+	      if(softVersion == 'FuJian')//yangtai add 2014/12/8
+	      {
+		      foldersTree = gFld('', 'SO_Overview_FuJian.html'); 
+	          nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'SO_Overview_FuJian.html'));
+			  nodeStatusDevice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Overview), 'SO_Overview_FuJian.html'));
+	      }
+		  else
+		  {
+	          foldersTree = gFld('', 'SO_Overview_user.html'); 
+	          nodeStatus = insFld(foldersTree, gFld(getMenuTitle(Menu1_Status), 'SO_Overview_user.html'));
+			  nodeStatusDevice = insFld(nodeStatus, gFld(getMenuTitle(Menu2_Sta_Overview), 'SO_Overview_user.html'));
+		  }
+          insFld(nodeStatusDevice, gFld(getMenuTitle(Menu3_SO_Overview), 'SO_Overview_user.html'));
+		  if(softVersion != 'HuBei'){
+			  insFld(nodeStatusDevice, gFld(getMenuTitle(Menu3_SO_Wizard), 'SO_Wizard.html'));
+		  }
+	      
+	  }
+  
+    if ( curuser == sysuser ||curuser == options[MENU_OPTION_TELACCOUNT])
+        menuAdmin(options);
+    else
+       menuUser(options);
+}
