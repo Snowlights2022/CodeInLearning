@@ -1,4 +1,4 @@
-﻿/*Latest renew at 2023.2.7*/
+/*Latest renew at 2023.2.7*/
 #include<stdio.h>
 int main()
 {
