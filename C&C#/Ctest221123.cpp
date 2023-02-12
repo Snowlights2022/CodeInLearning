@@ -29,7 +29,7 @@ task2:
         gets_s(a);
         gets_s(b);
         printf("\n");
-        char* p, * q, * m, * n;
+        char* p, * q, * m, * n;//该程序实现了输入a,b数组而输出d,c数组，利用指针完成数据的转移
         p = a;
         q = b;
         m = d;
